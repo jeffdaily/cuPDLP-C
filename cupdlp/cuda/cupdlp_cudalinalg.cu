@@ -33,6 +33,11 @@ cupdlp_int cuda_alloc_MVbuffer(
   // allocate an external buffer if needed
   CHECK_CUDA(cudaMalloc(dBuffer_csr_Ax, AxBufferSize))
 
+  // preprocess Ax
+  CHECK_CUSPARSE(cusparseSpMV_preprocess(
+      handle, CUSPARSE_OPERATION_NON_TRANSPOSE, &alpha, cuda_csr, vecX, &beta,
+      vecAx, CudaComputeType, alg, *dBuffer_csr_Ax))
+
   // get the buffer size needed by csc ATy
   CHECK_CUSPARSE(cusparseSpMV_bufferSize(
       handle, CUSPARSE_OPERATION_TRANSPOSE, &alpha, cuda_csc, vecY, &beta,
@@ -40,6 +45,11 @@ cupdlp_int cuda_alloc_MVbuffer(
 
   // allocate an external buffer if needed
   CHECK_CUDA(cudaMalloc(dBuffer_csc_ATy, ATyBufferSize))
+
+  // get the buffer size needed by csc ATy
+  CHECK_CUSPARSE(cusparseSpMV_preprocess(
+      handle, CUSPARSE_OPERATION_TRANSPOSE, &alpha, cuda_csc, vecY, &beta,
+      vecATy, CudaComputeType, alg, *dBuffer_csc_ATy))
 
   return EXIT_SUCCESS;
 }
