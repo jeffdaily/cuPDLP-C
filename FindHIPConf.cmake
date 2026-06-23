@@ -14,13 +14,9 @@ endif()
 
 set(ROCM_PATH $ENV{ROCM_PATH})
 
-# Enable HIP language
+# enable_language(HIP) auto-detects the host GPU arch (and errors on a
+# no-GPU build host); pass -DCMAKE_HIP_ARCHITECTURES=... to override.
 enable_language(HIP)
-
-# Set default architectures if not specified
-if(NOT DEFINED CMAKE_HIP_ARCHITECTURES OR CMAKE_HIP_ARCHITECTURES STREQUAL "")
-  set(CMAKE_HIP_ARCHITECTURES "gfx90a")
-endif()
 message(NOTICE "    - CMAKE_HIP_ARCHITECTURES: ${CMAKE_HIP_ARCHITECTURES}")
 
 # Find hipBLAS
